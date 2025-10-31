@@ -139,7 +139,7 @@ export function downloadFile(content: string, filename: string, mimeType: string
 export async function exportAsPDF(data: FloorPlanData): Promise<void> {
   // Import dynamically to avoid SSR issues
   const { jsPDF } = await import('jspdf');
-  const svg2pdf = (await import('svg2pdf.js')).default;
+  const svg2pdfModule = await import('svg2pdf.js');
   
   // Generate SVG first
   const svg = exportAsSVG(data);
@@ -157,11 +157,12 @@ export async function exportAsPDF(data: FloorPlanData): Promise<void> {
     svgElement.innerHTML = svg;
     const svgNode = svgElement.firstChild as SVGElement;
     
-    // Convert SVG to PDF
-    await svg2pdf(svgNode, doc, {
-      xOffset: 10,
-      yOffset: 10,
-      scale: 0.7
+    // Convert SVG to PDF using the module's svg2pdf function
+    await svg2pdfModule.svg2pdf(svgNode, doc, {
+      x: 10,
+      y: 10,
+      width: 277,
+      height: 190
     });
     
     // Save the PDF
